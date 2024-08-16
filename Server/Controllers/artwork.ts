@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-
-import Movie from '../Models/artwork';
+import Artwork from '../Models/artwork';
 import { SanitizeArray } from '../Util';
+
 
 /**
  * This function displays the artwork list in JSON format
@@ -11,9 +11,9 @@ import { SanitizeArray } from '../Util';
  * @param {Response} res
  * @param {NextFunction} next
  */
-export function DisplayMovieList(req: Request, res: Response, next: NextFunction): void
+export function DisplayArtworkList(req: Request, res: Response, next: NextFunction): void
 {
-    Movie.find({})
+    Artwork.find({})
     .then((data) =>
     {
         res.status(200).json({success: true, msg: "Artwork List Retrieved and Displayed", data: data, token: null})
@@ -32,7 +32,7 @@ export function DisplayMovieList(req: Request, res: Response, next: NextFunction
  * @param {Response} res
  * @param {NextFunction} next
  */
-export function DisplayMovieById(req: Request, res: Response, next: NextFunction) : void
+export function DisplayArtworkById(req: Request, res: Response, next: NextFunction) : void
 {
     // endpoint should be /api/:id
     let id = req.params.id;
@@ -94,7 +94,7 @@ export function AddArtwork(req: Request, res:Response, next: NextFunction): void
      Artwork.create(artwork)
      .then(() =>
      {
-        res.status(200).json({success: true, msg: "Artwork added", data: movie, token: null});
+        res.status(200).json({success: true, msg: "Artwork added", data: artwork, token: null});
      })
      .catch((err) =>
      {
@@ -142,7 +142,7 @@ export function UpdateArtwork(req:Request, res:Response, next:NextFunction): voi
 
         console.log(artworkToUpdate);
 
-        Movie.updateOne({_id: id}, artworkToUpdate)
+        Artwork.updateOne({_id: id}, artworkToUpdate)
         .then(() =>
         {
             res.status(200).json({success: true, msg: "Artwork updated", data: artworkToUpdate, token: null});

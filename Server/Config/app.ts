@@ -41,7 +41,7 @@ mongoose.connection.on('connected', () => {
 
 
 import indexRouter from '../Routes/index';
-import movieRouter from '../Routes/movie';
+import movieRouter from '../Routes/artwork';
 
 import { dot } from 'node:test/reporters';
 

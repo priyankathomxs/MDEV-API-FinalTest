@@ -25,7 +25,7 @@ mongoose_1.default.connection.on('connected', () => {
     console.log(`Connected to MongoDB Atlas`);
 });
 const index_1 = __importDefault(require("../Routes/index"));
-const movie_1 = __importDefault(require("../Routes/movie"));
+const artwork_1 = __importDefault(require("../Routes/artwork"));
 const app = (0, express_1.default)();
 app.use((0, morgan_1.default)('dev'));
 app.use(express_1.default.json());
@@ -62,7 +62,7 @@ let strategy = new JWTStrategy(jwtOptions, (jwt_payload, done) => {
 });
 passport_1.default.use(strategy);
 app.use('/api', index_1.default);
-app.use('/api/movie', movie_1.default);
+app.use('/api/movie', artwork_1.default);
 app.use(function (req, res, next) {
     next((0, http_errors_1.default)(404));
 });
