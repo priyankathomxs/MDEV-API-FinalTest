@@ -1,5 +1,5 @@
 {
-  "name": "mdev1004-m2024-ice10-api",
+  "name": "MDEV-API-FinalTest",
   "version": "0.0.1",
   "scripts": {
     "build": "tsc",
