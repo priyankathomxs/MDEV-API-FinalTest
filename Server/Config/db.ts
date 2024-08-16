@@ -1,7 +1,7 @@
-let localURI = 'mongodb://127.0.0.1:27017/movies';
-let remoteURI = 'your/remote/uri';
+let remoteURI = (process.env.MONGO_URI) as string;
+let secret = (process.env.APP_SECRET) as string;
 
 export default {
-    localURI: localURI,
-    remoteURI: remoteURI
+    remoteURI: remoteURI,
+    secret: secret
 }

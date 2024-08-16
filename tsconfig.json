@@ -1,22 +1,25 @@
 {
     "compilerOptions": {
-        "target": "ES2022",
-        "module": "CommonJS",
+        "target": "ES2015",
+        "module": "commonjs",
         "sourceMap": true,
-        "removeComments": true,
         "strict": true,
-        "noImplicitAny": true,
-        "strictNullChecks": true,
-        "strictFunctionTypes": true,
-        "strictBindCallApply": true,
-        "strictPropertyInitialization": true,
-        "noImplicitThis": true,
-        "alwaysStrict": true,
-        "noImplicitReturns": true,
         "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "alwaysStrict": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "strictNullChecks": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        "strictPropertyInitialization": true,
+        "removeComments": true
     },
-    "exclude": ["node_modules"]
+    "exclude": [
+        "node_modules"
+    ]
 }

@@ -1,27 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 
 import Movie from '../Models/movie';
+import { SanitizeArray } from '../Util';
 
 /**
- * This function sanitizes the array of strings
- *
- * @param {string[]} unsanitizedArray
- * @returns {string[]}
- */
-function SanitizeArray(unsanitizedArray: string[]): string[]
-{
-    let sanitizedArray: string[] = Array<string>();
-    for (const unsanitizedString of unsanitizedArray) 
-    {
-        sanitizedArray.push(unsanitizedString.trim());
-    }
-    return sanitizedArray;
-}
-
-/* API Functions */
-
-/**
- * This function displays the Movie List
+ * This function displays the movie list in JSON format
  *
  * @export
  * @param {Request} req
@@ -30,70 +13,72 @@ function SanitizeArray(unsanitizedArray: string[]): string[]
  */
 export function DisplayMovieList(req: Request, res: Response, next: NextFunction): void
 {
-    // Find all Movies in the Movie collection
     Movie.find({})
-    .then(function(data)
+    .then((data) =>
     {
-        res.status(200).json({success: true, msg:"Movie List Retrieved and Displayed", data: data});
+        res.status(200).json({success: true, msg: "Movie List Retrieved and Displayed", data: data, token: null})
     })
-    .catch(function(err)
+    .catch((err) =>
     {
         console.error(err);
-    });
+    })
 }
 
 /**
- * This function displays a single movie by the provided ID
+ * This function displays a single movie by ID in JSON format
  *
  * @export
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  */
-export function DisplayMovieByID(req: Request, res: Response, next: NextFunction): void
+export function DisplayMovieById(req: Request, res: Response, next: NextFunction) : void
 {
-    try
-    {
-        // Get the id from the url
-        let id = req.params.id;
+    // endpoint should be /api/:id
+    let id = req.params.id;
 
-        // Find the Movie by id
+    // ensure that the id is valid
+    if (id.length != 24)
+    {
+        res.status(400).json({success: false, msg: "A valid ID is required to retrieve a movie", data: null, token: null});
+    }
+    else
+    {
         Movie.findById({_id: id})
-        .then(function(data)
+        .then((data) =>
         {
-            res.status(200).json({success: true, msg: "Move Retrieved by ID", data: data})
+            if(data)
+            {
+                res.status(200).json({success: true, msg: "One Movie Retrieved and Displayed", data: data, token: null})
+            }
+            else
+            {
+                res.status(404).json({success: false, msg: "Movie not found", data: null, token: null});
+            }
         })
-        .catch(function(err)
+        .catch((err) =>
         {
             console.error(err);
-        });
-    }
-    catch
-    {
-        res.json({success: false, msg:"No Data to Display"});
+        })
     }
 }
 
 /**
- * This function adds a new movie to the database
+ * This function adds a movie to the database
  *
  * @export
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  */
-export function AddMovie(req: Request, res: Response, next: NextFunction): void
+export function AddMovie(req: Request, res:Response, next: NextFunction): void
 {
-    try
-    {
-        // Sanitize the array
-        let genres = SanitizeArray((req.body.genres as string).split(","));
-        let directors = SanitizeArray((req.body.directors as string).split(","));
-        let writers = SanitizeArray((req.body.writers as string).split(","));
-        let actors = SanitizeArray((req.body.actors as string).split(","));
+    let genres = (req.body.genres) ?  SanitizeArray(req.body.genres as string) : SanitizeArray("");
+    let directors = (req.body.directors) ? SanitizeArray(req.body.directors as string) : SanitizeArray("");
+    let actors = (req.body.actors) ? SanitizeArray(req.body.actors as string) : SanitizeArray("");
+    let writers = (req.body.writers) ? SanitizeArray(req.body.writers as string) : SanitizeArray("");
 
-        // Instantiate a new Movie
-        let movie = new Movie({
+    let movie = new Movie({
         movieID: req.body.movieID,
         title: req.body.title,
         studio: req.body.studio,
@@ -106,110 +91,102 @@ export function AddMovie(req: Request, res: Response, next: NextFunction): void
         shortDescription: req.body.shortDescription,
         mpaRating: req.body.mpaRating,
         criticsRating: req.body.criticsRating
-        });
-
-        // Create a new movie and pass it to the db
-        Movie.create(movie)
-        .then(function()
-        {
-            res.status(200).json({success: true, msg: "Movie Added Successfully", data: movie});
-        })
-        .catch(function(err)
-        {
-            console.error(err);
-        });
-    }
-    catch
-    {
-        res.json({success: false, msg:"No Data to Add"});
-    }
+     });
+ 
+     Movie.create(movie)
+     .then(() =>
+     {
+        res.status(200).json({success: true, msg: "Movie added", data: movie, token: null});
+     })
+     .catch((err) =>
+     {
+        console.error(err);
+     })
 }
 
 /**
- * This function removes a movie from the database by the provided ID
+ * This function updates a movie in the database
  *
  * @export
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  */
-export function UpdateMovie(req: Request, res: Response, next: NextFunction): void
+export function UpdateMovie(req:Request, res:Response, next:NextFunction): void
 {
-    try
-    {
-    
-        // Get the id from the url  
-        let id = req.params.id;
-        
-        // Sanitize the array
-        let genres = SanitizeArray((req.body.genres as string).split(","));
-        let directors = SanitizeArray((req.body.directors as string).split(","));
-        let writers = SanitizeArray((req.body.writers as string).split(","));
-        let actors = SanitizeArray((req.body.actors as string).split(","));
+    // endpoint should be /api/update/:id
+    let id = req.params.id;
 
-        // Instantiate a new Movie Object
+    // ensure that the id is valid
+    if (id.length != 24)
+    {
+        res.status(400).json({success: false, msg: "A valid ID is required to update a movie", data: null, token: null});
+    }
+    else
+    {
+        let genres = (req.body.genres) ?  SanitizeArray(req.body.genres as string) : SanitizeArray("");
+        let directors = (req.body.directors) ? SanitizeArray(req.body.directors as string) : SanitizeArray("");
+        let actors = (req.body.actors) ? SanitizeArray(req.body.actors as string) : SanitizeArray("");
+        let writers = (req.body.writers) ? SanitizeArray(req.body.writers as string) : SanitizeArray("");
+
         let movieToUpdate = new Movie({
-        _id: id,
-        movieID: req.body.movieID,
-        title: req.body.title,
-        studio: req.body.studio,
-        genres: genres,
-        directors: directors,
-        writers: writers,
-        actors: actors,
-        length: req.body.length,
-        year: req.body.year,
-        shortDescription: req.body.shortDescription,
-        mpaRating: req.body.mpaRating,
-        criticsRating: req.body.criticsRating
+            _id: id,
+            movieID: req.body.movieID,
+            title: req.body.title,
+            studio: req.body.studio,
+            genres: genres,
+            directors: directors,
+            writers: writers,
+            actors: actors,
+            length: req.body.length,
+            year: req.body.year,
+            shortDescription: req.body.shortDescription,
+            mpaRating: req.body.mpaRating,
+            criticsRating: req.body.criticsRating
         });
 
-        // Find the Movie by id and then update
+        console.log(movieToUpdate);
+
         Movie.updateOne({_id: id}, movieToUpdate)
-        .then(function()
+        .then(() =>
         {
-            res.status(200).json({success: true, msg: "Movie Updated Successfully", data: movieToUpdate});
+            res.status(200).json({success: true, msg: "Movie updated", data: movieToUpdate, token: null});
         })
-        .catch(function(err)
+        .catch((err) =>
         {
             console.error(err);
-        });
-
-    }
-    catch
-    {
-        res.json({success: false, msg:"No Data to Update"});
+        })
     }
 }
 
 /**
- * This function removes a movie from the database by the provided ID
+ * This function deletes a movie from the database
  *
  * @export
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  */
-export function DeleteMovie(req: Request, res: Response, next: NextFunction): void
+export function DeleteMovie(req:Request, res:Response, next:NextFunction): void
 {
-    try
-    {
-        // Get the id from the url
-        let id = req.params.id;
+    // endpoint should be /api/delete/:id
+    let id = req.params.id;
 
-        // Find the Movie by id and then delete
+    // ensure that the id is valid
+    if (id.length != 24)
+    {
+        res.status(400).json({success: false, msg: "A valid ID is required to delete a movie", data: null, token: null});
+    }
+    else
+    {
         Movie.deleteOne({_id: id})
-        .then(function()
+        .then(() =>
         {
-            res.json(id);
+            res.status(200).json({success: true, msg: "Movie deleted", data: id, token: null});
         })
-        .catch(function(err)
+        .catch((err) =>
         {
             console.error(err);
-        });
-    }
-    catch
-    {
-        res.json({success: false, msg:"No Data to Delete"});
+        })
     }
 }

@@ -1,45 +1,18 @@
 import express from 'express';
-let router = express.Router();
+const router = express.Router();
 
-/* Get the movie Controller */
-import { DisplayMovieList, DisplayMovieByID, AddMovie, UpdateMovie, DeleteMovie } from '../Controllers/movie';
-import { CreatePaymentIntent } from '../Controllers/stripe';
+import { ProcessLogin, ProcessLogout, ProcessRegistration } from '../Controllers/auth';
 
-/* GET /api/movies - display the movie list */
-router.get('/', (req, res, next) => 
-{
-  //DisplayMovieList(req, res, next);
-  // send a simple message to the client
-  res.json({message: 'Welcome to Express API'});
-});
+/* List of Authentication Routes (endpoints) */
 
-/* GET /api/movies/:id - display a movie by id */
-router.get('/:id', (req, res, next) => 
-{
-  DisplayMovieByID(req, res, next);
-});
+/* Register User */
+router.post('/register', (req, res, next) => {  ProcessRegistration(req, res, next); });
 
-/* POST /api/movies - add a new movie */
-router.post('/', (req, res, next) => 
-{
-  AddMovie(req, res, next);
-});
+/* Login User */
+router.post('/login', (req, res, next) => {  ProcessLogin(req, res, next); });
 
-/* PUT /api/movies/:id - update a movie by id */
-router.put('/:id', (req, res, next) => 
-{
-  UpdateMovie(req, res, next);
-});
+/* Logout User */
+router.get('/logout', (req, res, next) => {  ProcessLogout(req, res, next);});
 
-/* GET /api/movies/:id - delete a movie by id */
-router.delete('/:id', (req, res, next) => 
-{
-  DeleteMovie(req, res, next);
-});
-
-/* POST /api/payment - process payment */
-router.post('/payment', (req, res, next) => {
-  CreatePaymentIntent(req, res, next);
-});
 
 export default router;

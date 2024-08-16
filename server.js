@@ -6,11 +6,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("./Server/Config/app"));
 const debug_1 = __importDefault(require("debug"));
-(0, debug_1.default)('apitsc:server');
+(0, debug_1.default)('ice6:server');
 const http_1 = __importDefault(require("http"));
 let port = normalizePort(process.env.PORT || '3000');
 app_1.default.set('port', port);
-let server = http_1.default.createServer(app_1.default);
+const server = http_1.default.createServer(app_1.default);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
@@ -45,7 +45,7 @@ function onError(error) {
     }
 }
 function onListening() {
-    let addr = server.address();
+    let addr = (server.address());
     let bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
