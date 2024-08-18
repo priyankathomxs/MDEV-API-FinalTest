@@ -6,7 +6,7 @@
 
 import app from './Server/Config/app';
 import debug from 'debug';
-debug('ice6:server');
+debug('MDEV-API-FinalTest:server');
 import http from 'http';
 import { HttpError } from 'http-errors';
 import { AddressInfo } from 'net';
