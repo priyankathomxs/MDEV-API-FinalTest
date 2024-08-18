@@ -106,8 +106,8 @@ passport.use(strategy);
 
 app.use('/api', indexRouter);
 /* Example: Secure the movie routes with JWT authentication */
-//app.use('/api/movie', passport.authenticate('jwt', {session: false}), movieRouter);
-app.use('/api/movie', movieRouter);
+app.use('/api/artworks', passport.authenticate('jwt', {session: false}), movieRouter);
+app.use('/api/artworks', movieRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
