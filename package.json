@@ -1,6 +1,6 @@
 {
-  "name": "ice7",
-  "version": "0.0.7",
+  "name": "MDEV-API-FinalTest",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "node server.js"
